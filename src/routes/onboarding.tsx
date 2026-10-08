@@ -17,44 +17,45 @@ function Onboarding() {
 
   const finish = () => {
     markOnboarded();
-    navigate({ to: "/welcome" });
+    navigate({ to: "/login", replace: true });
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <div className="relative h-[52dvh] min-h-[280px] overflow-hidden rounded-b-3xl bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5]">
-        <img src={slide.image} alt={slide.alt} className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#2B1F6E]/55 via-[#7A22C8]/10 to-[#0FAEE5]/10" />
-        <button
-          type="button"
-          onClick={finish}
-          className="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-navy"
-        >
-          Skip
-        </button>
-      </div>
-      <div className="flex flex-1 flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6">
-        <h1 className="text-2xl font-semibold leading-8 text-heading">{slide.title}</h1>
-        <p className="mt-3 text-[15px] leading-6 text-muted-foreground">{slide.body}</p>
-        <div className="mt-auto pt-8">
-          <div className="mb-5 flex justify-center gap-2">
-            {ONBOARDING.map((item, dot) => (
-              <span
-                key={item.title}
-                className={dot === index ? "h-2 w-6 rounded-full bg-gradient-to-r from-[#7A22C8] to-[#0FAEE5]" : "h-2 w-2 rounded-full bg-[#E5E7EB]"}
-              />
-            ))}
-          </div>
-          <PrimaryButton
-            className="w-full"
-            onClick={() => {
-              if (last) finish();
-              else setIndex((value) => value + 1);
-            }}
-          >
-            {last ? "Get Started" : "Next"}
-          </PrimaryButton>
+    <div className="relative min-h-dvh overflow-hidden bg-[#0F0B2A]">
+      <img key={slide.image} src={slide.image} alt={slide.alt} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/15 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-[62%] bg-gradient-to-t from-[#0B0820] via-[#0B0820]/88 to-transparent" />
+      <button
+        type="button"
+        onClick={finish}
+        className="absolute right-4 top-[max(0.85rem,env(safe-area-inset-top))] z-10 rounded-full bg-black/40 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md"
+      >
+        Skip
+      </button>
+      <div className="relative z-10 flex min-h-dvh flex-col justify-end px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+        <h1 className="max-w-[18rem] text-[28px] font-semibold leading-8 text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.45)]">
+          {slide.title}
+        </h1>
+        <p className="mt-3 max-w-[20rem] text-[16px] leading-6 text-white/95 [text-shadow:0_1px_10px_rgba(0,0,0,0.4)]">
+          {slide.body}
+        </p>
+        <div className="mb-5 mt-8 flex justify-center gap-2">
+          {ONBOARDING.map((item, dot) => (
+            <span
+              key={item.title}
+              className={dot === index ? "h-2 w-6 rounded-full bg-white" : "h-2 w-2 rounded-full bg-white/40"}
+            />
+          ))}
         </div>
+        <PrimaryButton
+          className="w-full"
+          onClick={() => {
+            if (last) finish();
+            else setIndex((value) => value + 1);
+          }}
+        >
+          {last ? "Get Started" : "Next"}
+        </PrimaryButton>
       </div>
     </div>
   );

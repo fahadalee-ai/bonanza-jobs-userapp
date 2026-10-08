@@ -2,6 +2,7 @@ import { Link, useCanGoBack, useNavigate, useRouter } from "@tanstack/react-rout
 import { ArrowLeft, Check, Eye, EyeOff, X } from "lucide-react";
 import { useEffect, useState, type ButtonHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from "react";
 import * as Slider from "@radix-ui/react-slider";
+import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/lib/store";
 
@@ -9,7 +10,7 @@ export function useGuard() {
   const app = useApp();
   const navigate = useNavigate();
   useEffect(() => {
-    if (app.hydrated && !app.user) navigate({ to: "/welcome", replace: true });
+    if (app.hydrated && !app.user) navigate({ to: "/login", replace: true });
   }, [app.hydrated, app.user, navigate]);
   return app;
 }
@@ -35,15 +36,22 @@ export function PageHeader({
   back = true,
   fallback = "/home",
   right,
+  brand = false,
 }: {
   title: string;
   subtitle?: string;
   back?: boolean;
   fallback?: string;
   right?: ReactNode;
+  brand?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-30 bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur">
+      {brand && (
+        <div className="mb-3 flex justify-center">
+          <Logo height={64} />
+        </div>
+      )}
       <div className="flex items-center gap-3">
         {back && <BackButton fallback={fallback} />}
         <div className="min-w-0 flex-1">
@@ -57,7 +65,7 @@ export function PageHeader({
 }
 
 const buttonBase =
-  "inline-flex h-[52px] items-center justify-center gap-2 rounded-[14px] px-4 text-[15px] font-semibold transition active:scale-[0.99] disabled:opacity-40";
+  "inline-flex h-[52px] items-center justify-center gap-2 rounded-lg px-4 text-[15px] font-semibold transition active:scale-[0.99] disabled:opacity-40";
 
 export function PrimaryButton({ className, children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
@@ -221,6 +229,16 @@ export function SelectField({
         {children}
       </select>
     </label>
+  );
+}
+
+export function AuthCanvas({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#7A22C8] via-[#4A28C9] to-[#0FAEE5] px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))]">
+      <div className="pointer-events-none absolute -left-16 -top-8 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-[#7EE7FF]/30 blur-3xl" />
+      <div className="relative">{children}</div>
+    </div>
   );
 }
 

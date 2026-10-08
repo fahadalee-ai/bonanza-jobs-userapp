@@ -1,27 +1,46 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import type { Connect, Plugin } from "vite";
 
-/** Public URL path (trailing slash). Must match Nginx `location` and `PREVIEW_URL` in preview.html. */
-const PRODUCTION_BASE = "/on-top-aba/";
+/** Serve the phone-frame page itself. Otherwise the app router treats /preview.html as a missing screen. */
+function servePreviewHtml(): Plugin {
+  const file = resolve(process.cwd(), "preview.html");
+  const send: Connect.NextHandleFunction = (req, res, next) => {
+    const path = (req.url ?? "").split("?")[0];
+    if (!path.endsWith("/preview.html")) return next();
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.end(readFileSync(file));
+  };
+  const install = (server: { middlewares: Connect.Server }) => {
+    server.middlewares.stack.unshift({ route: "", handle: send });
+  };
+  return {
+    name: "serve-preview-html",
+    configureServer(server) {
+      install(server);
+    },
+    configurePreviewServer(server) {
+      install(server);
+    },
+    generateBundle() {
+      this.emitFile({ type: "asset", fileName: "preview.html", source: readFileSync(file) });
+    },
+  };
+}
 
 export default defineConfig({
-  cloudflare: false,
+  // Nitro writes Vercel Build Output API files to `.vercel/output` on `vite build`.
+  nitro: { preset: "vercel" },
   vite: {
-    // Subpath must match Nginx and preview.html; use this for dev/preview/build so PM2 `vite preview` matches assets.
-    base: PRODUCTION_BASE,
-    // Allow the domain to access the preview server (if needed for SSR testing)
+    base: "/",
+    plugins: [servePreviewHtml()],
     server: {
-        allowedHosts: [
-            "demo.sourapps.com",
-            "localhost",
-            "127.0.0.1",
-        ],
+      allowedHosts: ["localhost", "127.0.0.1", ".vercel.app"],
     },
     preview: {
-        allowedHosts: [
-            "demo.sourapps.com",
-            "localhost",
-            "127.0.0.1",
-        ],
+      allowedHosts: ["localhost", "127.0.0.1", ".vercel.app"],
     },
   },
 });

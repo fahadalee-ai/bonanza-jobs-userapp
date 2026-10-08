@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { AppStatus } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
 import { CompanyMark } from "@/components/job-ui";
+import { Logo } from "@/components/brand";
 import { Chip, EmptyState, PrimaryLink, StatusBadge, useGuard } from "@/components/ui-app";
 
 export const Route = createFileRoute("/applications/")({
@@ -32,7 +33,8 @@ function Applications() {
   return (
     <div className="min-h-dvh pb-28">
       <header className="bg-gradient-to-br from-[#0678A8] to-[#0FAEE5] px-4 pb-5 pt-[max(1rem,env(safe-area-inset-top))] text-white">
-        <p className="text-xs font-semibold uppercase tracking-wide text-white/80">Candidate</p>
+        <Logo variant="white" height={56} />
+        <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-white/80">Candidate</p>
         <h1 className="mt-1 text-2xl font-semibold">Applications</h1>
       </header>
       <div className="px-4 pt-4">

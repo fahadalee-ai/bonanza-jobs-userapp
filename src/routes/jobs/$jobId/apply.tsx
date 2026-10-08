@@ -21,40 +21,21 @@ function Apply() {
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [location, setLocation] = useState(user ? `${user.city}, ${user.state}` : "");
   const [resumeName, setResumeName] = useState(user?.resumeName ?? "");
-  const [uploadError, setUploadError] = useState("");
   const [cover, setCover] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   if (!job || !user) return null;
 
   const next = () => {
-    setError("");
-    if (step === 0 && phone.replace(/\D/g, "").length < 10) {
-      setError("Enter a valid phone number.");
-      return;
-    }
-    if (step === 1 && !resumeName) {
-      setError("Choose a resume to continue.");
-      return;
-    }
-    if (step === 3 && QUESTIONS.some((question) => !answers[question.id])) {
-      setError("Answer each question to continue.");
-      return;
-    }
     if (step < 4) {
       setStep((value) => value + 1);
       return;
     }
     setBusy(true);
     window.setTimeout(() => {
-      const result = app.applyToJob({ jobId, phone, location, resumeName, coverLetter: cover });
+      app.applyToJob({ jobId, phone, location, resumeName, coverLetter: cover });
       setBusy(false);
-      if (!result.ok) {
-        setError("You already have an active application for this role.");
-        return;
-      }
       haptic();
       navigate({ to: "/jobs/$jobId/success", params: { jobId }, replace: true });
     }, 600);
@@ -100,26 +81,16 @@ function Apply() {
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   if (!file) return;
-                  if (file.size > 5 * 1024 * 1024) {
-                    setUploadError("That file is over 5 MB.");
-                    return;
-                  }
-                  if (file.name.toLowerCase().includes("fail")) {
-                    setUploadError("Upload failed. Try again.");
-                    return;
-                  }
-                  setUploadError("");
                   setResumeName(file.name);
                 }}
               />
             </label>
             {resumeName && <p className="mt-3 text-sm font-medium">Selected: {resumeName}</p>}
-            {uploadError && <p className="mt-2 text-sm text-danger">{uploadError}</p>}
           </>
         )}
         {step === 2 && (
           <>
-            <TextArea label="Cover letter" maxLength={800} value={cover} onChange={(event) => setCover(event.target.value)} placeholder="Optional. A few sentences on why this role fits." />
+            <TextArea label="Cover letter" value={cover} onChange={(event) => setCover(event.target.value)} placeholder="Optional. A few sentences on why this role fits." />
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">{cover.length}/800</p>
               <button type="button" className="text-sm font-semibold text-blue" onClick={() => setStep(3)}>
@@ -166,7 +137,6 @@ function Apply() {
             <Review title="Screening" body={QUESTIONS.map((question) => `${question.prompt}\n${answers[question.id] || "—"}`).join("\n\n")} onEdit={() => setStep(3)} />
           </div>
         )}
-        {error && <p className="mt-3 text-sm font-medium text-danger">{error}</p>}
       </div>
       <div className="fixed bottom-0 left-1/2 z-40 grid w-full max-w-[390px] -translate-x-1/2 grid-cols-2 gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <SecondaryButton

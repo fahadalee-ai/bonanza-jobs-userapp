@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EMPTY_FILTERS, filterJobs, filtersActive, sortJobs, type JobFilters } from "@/lib/jobs";
 import { haptic } from "@/lib/format";
 import { useApp } from "@/lib/store";
+import { Logo } from "@/components/brand";
 import { FilterSheet, JobCard, SortSheet } from "@/components/job-ui";
 import { Chip, EmptyState, PrimaryButton, Skeleton, useGuard } from "@/components/ui-app";
 
@@ -64,7 +65,7 @@ function JobsPage() {
 
   return (
     <div
-      className="min-h-dvh pb-28"
+      className="min-h-dvh bg-[#E4E8F2] pb-28 dark:bg-background"
       onTouchStart={(event) => {
         if (window.scrollY <= 0) setPull(event.touches[0]?.clientY ?? 0);
       }}
@@ -80,9 +81,15 @@ function JobsPage() {
         setPull(0);
       }}
     >
-      <div className="sticky top-0 z-30 bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur">
+      <div className="sticky top-0 z-30 bg-[#E4E8F2]/95 px-4 pb-3 pt-[max(0.65rem,env(safe-area-inset-top))] backdrop-blur dark:bg-background/95">
+        <div className="mb-2.5 flex items-center justify-between">
+          <Logo height={40} />
+          <span className="rounded-full bg-[#E0F4FC] px-2.5 py-1 text-[11px] font-semibold text-[#075F7A] dark:bg-[#0FAEE5]/15 dark:text-[#8FDBF5]">
+            Candidate
+          </span>
+        </div>
         <div className="flex items-center gap-2">
-          <label className="flex h-12 min-w-0 flex-1 items-center gap-2 rounded-xl border border-border bg-card px-3">
+          <label className="flex h-12 min-w-0 flex-1 items-center gap-2 rounded-xl border border-white bg-white px-3 shadow-[0_6px_16px_rgba(27,27,47,0.06)] dark:border-white/10 dark:bg-card">
             <Search size={18} className="text-muted-foreground" />
             <input
               value={filters.q}
@@ -91,11 +98,11 @@ function JobsPage() {
               className="h-full min-w-0 flex-1 bg-transparent outline-none"
             />
           </label>
-          <button type="button" aria-label="Filters" onClick={() => setFilterOpen(true)} className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card">
+          <button type="button" aria-label="Filters" onClick={() => setFilterOpen(true)} className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-white bg-white shadow-[0_6px_16px_rgba(27,27,47,0.06)] dark:border-white/10 dark:bg-card">
             <SlidersHorizontal size={18} />
             {filtersActive(filters) && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#0FAEE5]" />}
           </button>
-          <button type="button" aria-label="Sort" onClick={() => setSortOpen(true)} className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card">
+          <button type="button" aria-label="Sort" onClick={() => setSortOpen(true)} className="flex h-12 w-12 items-center justify-center rounded-xl border border-white bg-white shadow-[0_6px_16px_rgba(27,27,47,0.06)] dark:border-white/10 dark:bg-card">
             <ArrowUpDown size={18} />
           </button>
         </div>
@@ -118,7 +125,7 @@ function JobsPage() {
 
       <div className="px-4">
         {refreshing && <p className="py-2 text-center text-xs font-semibold text-blue">Refreshing…</p>}
-        <p className="py-3 text-sm text-muted-foreground">{results.length.toLocaleString("en-US")} jobs</p>
+        <p className="py-3 text-sm font-semibold text-heading">{results.length.toLocaleString("en-US")} jobs</p>
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, index) => (

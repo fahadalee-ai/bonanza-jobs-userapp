@@ -33,44 +33,47 @@ export function JobCard({
   compact?: boolean;
 }) {
   return (
-    <article className="rounded-2xl bg-card p-4 shadow-[0_4px_16px_rgba(27,27,47,0.06)] dark:border dark:border-white/10 dark:shadow-none">
-      <button type="button" onClick={onOpen} className="flex w-full gap-3 text-left">
-        <CompanyMark initials={job.initials} />
-        <span className="min-w-0 flex-1">
-          <span className="flex items-start justify-between gap-2">
-            <span className="text-[15px] font-semibold leading-5 text-foreground">{job.title}</span>
-          </span>
-          <span className="mt-0.5 block text-[13px] text-muted-foreground">{job.company}</span>
-          <span className="mt-0.5 block text-[13px] text-muted-foreground">{job.locationLabel}</span>
-        </span>
-      </button>
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <button type="button" onClick={onOpen} className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 text-left">
-          <span className="rounded-full bg-[#E0F4FC] px-2 py-0.5 text-[11px] font-semibold text-[#075F7A] dark:bg-[#0FAEE5]/15 dark:text-[#8FDBF5]">
-            {job.jobType}
-          </span>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-foreground">{job.workMode}</span>
-          {job.easyApply && (
-            <span className="rounded-full bg-[#F3E8FF] px-2 py-0.5 text-[11px] font-semibold text-[#6B21A8] dark:bg-[#7A22C8]/25 dark:text-[#E9D5FF]">
-              Easy Apply
-            </span>
-          )}
-          <span className="rounded-full bg-[#E7F8FE] px-2 py-0.5 text-[11px] font-semibold text-[#077A9E] dark:bg-[#0FAEE5]/15 dark:text-[#7ED8F5]">
-            {job.match}% match
+    <article className="rounded-2xl border border-white bg-white p-3.5 shadow-[0_8px_22px_rgba(27,27,47,0.08)] dark:border-white/10 dark:bg-card">
+      <div className="flex items-start gap-3">
+        <button type="button" onClick={onOpen} className="flex min-w-0 flex-1 gap-3 text-left">
+          <CompanyMark initials={job.initials} />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[16px] font-semibold leading-5 text-heading">{job.title}</span>
+            <span className="mt-0.5 block truncate text-[13px] font-medium text-foreground">{job.company}</span>
+            <span className="block truncate text-[13px] text-muted-foreground">{job.locationLabel}</span>
           </span>
         </button>
         {onSave && (
-          <button type="button" aria-label={saved ? "Remove saved job" : "Save job"} onClick={onSave} className="flex h-11 w-11 items-center justify-center">
-            <Heart size={20} strokeWidth={1.75} className={saved ? "fill-[#7A22C8] text-[#7A22C8]" : "text-muted-foreground"} />
+          <button
+            type="button"
+            aria-label={saved ? "Remove saved job" : "Save job"}
+            onClick={onSave}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F6F7FB] dark:bg-white/10"
+          >
+            <Heart size={18} strokeWidth={1.75} className={saved ? "fill-[#7A22C8] text-[#7A22C8]" : "text-[#6B7280]"} />
           </button>
         )}
       </div>
       {!compact && (
-        <button type="button" onClick={onOpen} className="mt-2 flex w-full items-center justify-between text-left">
-          <span className="text-sm font-semibold text-heading">{salaryLabel(job.salaryMin, job.salaryMax, job.salaryUnit)}</span>
-          <span className="text-xs text-muted-foreground">{postedLabel(job.postedDays)}</span>
+        <button type="button" onClick={onOpen} className="mt-3 flex w-full items-center justify-between gap-3 text-left">
+          <span className="text-[15px] font-bold text-[#2B1F6E] dark:text-foreground">{salaryLabel(job.salaryMin, job.salaryMax, job.salaryUnit)}</span>
+          <span className="shrink-0 text-xs font-medium text-muted-foreground">{postedLabel(job.postedDays)}</span>
         </button>
       )}
+      <button type="button" onClick={onOpen} className="mt-2.5 flex w-full flex-wrap items-center gap-1.5 text-left">
+        <span className="rounded-full bg-[#E0F4FC] px-2.5 py-1 text-[11px] font-semibold text-[#075F7A] dark:bg-[#0FAEE5]/15 dark:text-[#8FDBF5]">
+          {job.jobType}
+        </span>
+        <span className="rounded-full bg-[#EEF0F6] px-2.5 py-1 text-[11px] font-semibold text-foreground">{job.workMode}</span>
+        {job.easyApply && (
+          <span className="rounded-full bg-[#F3E8FF] px-2.5 py-1 text-[11px] font-semibold text-[#6B21A8] dark:bg-[#7A22C8]/25 dark:text-[#E9D5FF]">
+            Easy Apply
+          </span>
+        )}
+        <span className="ml-auto rounded-full bg-gradient-to-r from-[#7A22C8] to-[#0FAEE5] px-2.5 py-1 text-[11px] font-semibold text-white">
+          {job.match}% match
+        </span>
+      </button>
     </article>
   );
 }

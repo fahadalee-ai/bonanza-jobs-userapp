@@ -106,7 +106,7 @@ function ResumePage() {
       </div>
       <Sheet open={ask} title="Access your files?" onClose={() => setAsk(false)}>
         <p className="text-sm leading-5 text-muted-foreground">Bonanza Jobs needs access to a resume file on this device. We only upload the file you choose.</p>
-        <label className="mt-4 flex h-[52px] w-full cursor-pointer items-center justify-center rounded-[14px] bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] font-semibold text-white">
+        <label className="mt-4 flex h-[52px] w-full cursor-pointer items-center justify-center rounded-lg bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] font-semibold text-white">
           Allow and choose a file
           <input
             type="file"

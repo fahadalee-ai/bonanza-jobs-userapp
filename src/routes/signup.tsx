@@ -1,54 +1,57 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { formatPhone } from "@/lib/format";
+import { formatPhone, haptic } from "@/lib/format";
 import { useApp } from "@/lib/store";
-import { PageHeader, PasswordChecklist, PasswordField, PrimaryButton, TextField, strengthOk } from "@/components/ui-app";
+import { Logo } from "@/components/brand";
+import { AuthCanvas, PasswordField, PrimaryButton, TextField } from "@/components/ui-app";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
 });
 
 function SignUp() {
-  const { beginSignup } = useApp();
+  const { register } = useApp();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [agree, setAgree] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState(false);
 
   const submit = () => {
-    const next: Record<string, string> = {};
-    if (name.trim().length < 2) next.name = "Enter your full name.";
-    if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "Enter a valid email.";
-    if (phone.replace(/\D/g, "").length !== 10) next.phone = "Use a 10-digit US number.";
-    if (!strengthOk(password)) next.password = "Choose a stronger password.";
-    if (password !== confirm) next.confirm = "Passwords do not match.";
-    if (!agree) next.agree = "Agree to the Terms and Privacy Policy to continue.";
-    setErrors(next);
-    if (Object.keys(next).length) return;
-    const result = beginSignup({ name, email, phone, password });
-    if (!result.ok) {
-      setErrors({ email: "An account with this email already exists." });
-      return;
-    }
-    navigate({ to: "/verify" });
+    if (busy) return;
+    setBusy(true);
+    const result = register({ name, email, phone, password: password || confirm });
+    haptic();
+    navigate({ to: result.firstTime ? "/setup" : "/home", replace: true });
   };
 
   return (
-    <div className="min-h-dvh pb-28">
-      <PageHeader title="Create account" subtitle="It’s free for candidates" fallback="/welcome" />
+    <AuthCanvas>
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          aria-label="Back to login"
+          onClick={() => navigate({ to: "/login" })}
+          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white"
+        >
+          <ArrowLeft size={20} strokeWidth={1.75} />
+        </button>
+        <Logo variant="white" height={48} />
+      </div>
+      <h1 className="mt-6 text-[28px] font-semibold leading-8 text-white">Create your account</h1>
+      <p className="mt-2 text-[15px] leading-6 text-white/85">Join Bonanza Jobs as a candidate. It’s free.</p>
       <form
-        className="px-4"
+        className="mt-6 rounded-3xl bg-white p-4 shadow-[0_16px_40px_rgba(15,11,42,0.22)]"
         onSubmit={(event) => {
           event.preventDefault();
           submit();
         }}
       >
-        <TextField label="Full name" value={name} onChange={(event) => setName(event.target.value)} error={errors.name} autoComplete="name" />
-        <TextField label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} error={errors.email} autoComplete="email" />
+        <TextField label="Full name" value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="Jordan Ellis" />
+        <TextField label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" placeholder="you@email.com" />
         <TextField
           label="Mobile"
           inputMode="tel"
@@ -56,26 +59,20 @@ function SignUp() {
           value={phone}
           placeholder="(512) 555-0148"
           onChange={(event) => setPhone(formatPhone(event.target.value))}
-          error={errors.phone}
-          hint="US +1"
         />
-        <PasswordField label="Password" value={password} onChange={(event) => setPassword(event.target.value)} error={errors.password} autoComplete="new-password" />
-        <PasswordChecklist password={password} />
-        <PasswordField label="Confirm password" value={confirm} onChange={(event) => setConfirm(event.target.value)} error={errors.confirm} autoComplete="new-password" />
-        <label className="mb-3 flex items-start gap-3 text-sm leading-5">
-          <input type="checkbox" checked={agree} onChange={(event) => setAgree(event.target.checked)} className="mt-1 h-5 w-5 accent-[#7A22C8]" />
-          <span>
-            I agree to the <Link to="/terms" className="font-semibold text-blue">Terms of Service</Link> and{" "}
-            <Link to="/privacy" className="font-semibold text-blue">Privacy Policy</Link>.
-          </span>
-        </label>
-        {errors.agree && <p className="mb-3 text-xs font-medium text-danger">{errors.agree}</p>}
-      </form>
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[390px] -translate-x-1/2 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <PrimaryButton className="w-full" onClick={submit}>
-          Create Account
+        <PasswordField label="Password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" placeholder="Create a password" />
+        <PasswordField label="Confirm password" value={confirm} onChange={(event) => setConfirm(event.target.value)} autoComplete="new-password" placeholder="Repeat password" />
+        <PrimaryButton className="w-full" disabled={busy} onClick={submit}>
+          {busy ? "Creating account…" : "Create Account"}
         </PrimaryButton>
-      </div>
-    </div>
+        <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
+          By creating an account you agree to the <Link to="/terms" className="font-semibold text-[#0FAEE5]">Terms</Link> and{" "}
+          <Link to="/privacy" className="font-semibold text-[#0FAEE5]">Privacy Policy</Link>.
+        </p>
+      </form>
+      <button type="button" onClick={() => navigate({ to: "/login" })} className="mt-6 w-full text-center text-sm font-semibold text-white">
+        Already have an account? Log in
+      </button>
+    </AuthCanvas>
   );
 }

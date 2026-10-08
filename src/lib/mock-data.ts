@@ -1,3 +1,7 @@
+import findJobsImage from "@/img/onboarding-find-jobs.jpg";
+import applyImage from "@/img/onboarding-apply.jpg";
+import referredImage from "@/img/onboarding-referred.jpg";
+
 export type ThemeMode = "light" | "dark" | "system";
 
 export type WorkMode = "On-site" | "Remote" | "Hybrid";
@@ -180,22 +184,19 @@ export const ONBOARDING = [
   {
     title: "Find Jobs That Fit Your Career",
     body: "Search thousands of verified US jobs by role, location, and salary, all in one place.",
-    image:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
+    image: findJobsImage,
     alt: "Professional working on a laptop in a bright modern office",
   },
   {
     title: "Apply in Just a Few Taps",
     body: "Upload your resume once and apply instantly. Track every application from submitted to hired.",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1600&q=80",
+    image: applyImage,
     alt: "Smiling professional holding a phone in a bright office",
   },
   {
     title: "Get Referred, Get Hired Faster",
     body: "Top recruiters can refer you directly to employers, giving your profile a priority review.",
-    image:
-      "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80",
+    image: referredImage,
     alt: "Two professionals shaking hands in an office",
   },
 ] as const;

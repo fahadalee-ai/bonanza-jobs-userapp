@@ -13,7 +13,7 @@ function About() {
     <div className="min-h-dvh">
       <PageHeader title="About" fallback="/settings" />
       <div className="px-4">
-        <Logo />
+        <Logo height={72} />
         <p className="mt-4 text-[15px] leading-6 text-muted-foreground">
           Bonanza Jobs connects candidates, employers, and referral partners. This candidate app is adapted from the Bonanza Jobs portal: search verified US roles, apply in a few steps, and follow each application from submitted to hired.
         </p>

@@ -125,7 +125,7 @@ function JobDetails() {
         )}
       </div>
       <div className="fixed bottom-0 left-1/2 z-40 flex w-full max-w-[390px] -translate-x-1/2 gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <button type="button" aria-label="Save" onClick={() => app.toggleSave(job.id)} className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-border">
+        <button type="button" aria-label="Save" onClick={() => app.toggleSave(job.id)} className="flex h-[52px] w-[52px] items-center justify-center rounded-lg border border-border">
           <Heart size={20} className={app.savedIds.includes(job.id) ? "fill-[#7A22C8] text-[#7A22C8]" : ""} />
         </button>
         {existing ? (

@@ -11,7 +11,7 @@ function RoleSwitch() {
   const navigate = useNavigate();
   return (
     <div className="min-h-dvh pb-28">
-      <PageHeader title="Switch role" subtitle="This app is the candidate experience" fallback="/welcome" />
+      <PageHeader brand title="Switch role" subtitle="This app is the candidate experience" fallback="/login" />
       <div className="space-y-3 px-4">
         <RoleCard icon={<UserRound size={20} />} title="Candidate" body="Search jobs, apply, and track your status." active />
         <RoleCard icon={<Building2 size={20} />} title="Employer" body="Post roles and review candidates in the employer portal." />
@@ -21,7 +21,7 @@ function RoleSwitch() {
         </p>
       </div>
       <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[390px] -translate-x-1/2 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <PrimaryButton className="w-full" onClick={() => navigate({ to: "/welcome" })}>
+        <PrimaryButton className="w-full" onClick={() => navigate({ to: "/login" })}>
           Continue as Candidate
         </PrimaryButton>
       </div>

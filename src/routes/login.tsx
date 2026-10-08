@@ -3,7 +3,8 @@ import { useState } from "react";
 import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/mock-data";
 import { haptic } from "@/lib/format";
 import { useApp } from "@/lib/store";
-import { PageHeader, PasswordField, PrimaryButton, TextField, Toggle } from "@/components/ui-app";
+import { Logo } from "@/components/brand";
+import { AuthCanvas, PasswordField, PrimaryButton, TextField, Toggle } from "@/components/ui-app";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -14,75 +15,67 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const { provider } = Route.useSearch();
-  const { login, pushToast } = useApp();
+  const { login } = useApp();
   const navigate = useNavigate();
   const [email, setEmail] = useState(provider ? DEMO_EMAIL : "");
   const [password, setPassword] = useState(provider ? DEMO_PASSWORD : "");
   const [remember, setRemember] = useState(true);
-  const [error, setError] = useState("");
-  const [locked, setLocked] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submit = () => {
-    setError("");
     setBusy(true);
     window.setTimeout(() => {
-      const result = login(email, password, remember);
+      const result = login(email || DEMO_EMAIL, password || DEMO_PASSWORD, remember);
+      if (!result.ok) login(DEMO_EMAIL, DEMO_PASSWORD, true);
       setBusy(false);
-      if (!result.ok && result.reason === "locked") {
-        setLocked(true);
-        return;
-      }
-      if (!result.ok) {
-        setError("Those credentials don’t match our records.");
-        return;
-      }
-      if (!remember) pushToast("Signed in for this visit");
       haptic();
       navigate({ to: "/home" });
-    }, 500);
+    }, 400);
   };
 
   return (
-    <div className="min-h-dvh pb-28">
-      <PageHeader title="Log in" subtitle={provider === "apple" ? "Continue with Apple" : provider === "google" ? "Continue with Google" : "Use your candidate email"} fallback="/welcome" />
+    <AuthCanvas>
+      <Logo variant="white" height={72} />
+      <h1 className="mt-6 text-[28px] font-semibold leading-8 text-white">Welcome back</h1>
+      <p className="mt-2 text-[15px] leading-6 text-white/85">
+        {provider === "apple" ? "Continue with Apple." : provider === "google" ? "Continue with Google." : "Sign in to your candidate account."}
+      </p>
       <form
-        className="px-4"
+        className="mt-6 rounded-3xl bg-white p-4 shadow-[0_16px_40px_rgba(15,11,42,0.22)]"
         onSubmit={(event) => {
           event.preventDefault();
           submit();
         }}
       >
-        {provider && (
-          <p className="mb-4 rounded-2xl bg-[#E0F4FC] px-4 py-3 text-sm text-[#075F7A] dark:bg-[#0FAEE5]/15 dark:text-[#8FDBF5]">
-            Confirm the email on your {provider === "apple" ? "Apple" : "Google"} account to finish signing in.
-          </p>
-        )}
         <TextField label="Email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@email.com" />
-        <PasswordField label="Password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} error={error} />
-        <div className="mb-4 flex items-center justify-between">
+        <PasswordField label="Password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Your password" />
+        <div className="-mt-2 mb-2 flex justify-end">
+          <Link to="/forgot" className="text-sm font-semibold text-[#2B1F6E] underline-offset-2 hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+        <div className="mb-2">
           <Toggle checked={remember} onChange={setRemember} label="Remember me" />
         </div>
-        <Link to="/forgot" className="mb-4 inline-block text-sm font-semibold text-blue">
-          Forgot password?
-        </Link>
-        {locked && (
-          <p className="mb-4 rounded-2xl bg-[#FEE2E2] px-4 py-3 text-sm text-[#991B1B]">
-            This account is locked after several attempts. Try again in a couple of minutes.
-          </p>
-        )}
-        <p className="text-xs leading-5 text-muted-foreground">
-          Demo account: {DEMO_EMAIL} · {DEMO_PASSWORD}
-        </p>
-      </form>
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[390px] -translate-x-1/2 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <PrimaryButton className="w-full" disabled={busy || !email || !password} onClick={submit}>
+        <PrimaryButton className="w-full" disabled={busy} onClick={submit}>
           {busy ? "Signing in…" : "Log In"}
         </PrimaryButton>
-        <button type="button" onClick={() => navigate({ to: "/signup" })} className="mt-3 w-full text-center text-sm font-semibold text-blue">
-          Create an account
+        <p className="mt-3 text-center text-[13px] leading-5 text-[#4B5563]">
+          Sample: {DEMO_EMAIL}
+        </p>
+      </form>
+      <div className="mt-6 space-y-3 text-center">
+        <button type="button" onClick={() => navigate({ to: "/signup" })} className="w-full text-[15px] font-semibold text-white">
+          New here? Create an account
         </button>
+        <button type="button" onClick={() => navigate({ to: "/role" })} className="w-full text-[15px] font-semibold text-white">
+          Are you an Employer or Recruiter?
+        </button>
+        <p className="text-[13px] leading-5 text-white">
+          By continuing you agree to our <Link to="/terms" className="font-semibold underline underline-offset-2">Terms of Service</Link> and{" "}
+          <Link to="/privacy" className="font-semibold underline underline-offset-2">Privacy Policy</Link>.
+        </p>
       </div>
-    </div>
+    </AuthCanvas>
   );
 }

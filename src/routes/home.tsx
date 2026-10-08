@@ -38,41 +38,48 @@ function Home() {
     .sort((a, b) => b.match - a.match)
     .slice(0, 6);
 
+  const stats = [
+    { label: "Active Applications", value: active.length, className: "bg-[#E7F8FE] text-[#075F7A] dark:bg-[#0FAEE5]/15 dark:text-[#8FDBF5]" },
+    { label: "Saved Jobs", value: app.savedIds.length, className: "bg-[#F3E8FF] text-[#6B21A8] dark:bg-[#7A22C8]/20 dark:text-[#E9D5FF]" },
+    { label: "Interviews", value: interviews.length, className: "bg-[#FFF6DC] text-[#92400E] dark:bg-[#F5B301]/15 dark:text-[#F5D98A]" },
+    { label: "Profile Views", value: user.profileViews, className: "bg-[#DCFCE7] text-[#166534] dark:bg-[#16A34A]/15 dark:text-[#86EFAC]" },
+  ];
+
   return (
-    <div className="pb-28">
-      <header className="relative overflow-hidden bg-gradient-to-br from-[#0678A8] via-[#0FAEE5] to-[#5B4DDB] px-4 pb-16 pt-[max(0.8rem,env(safe-area-inset-top))] text-white">
-        <div className="pointer-events-none absolute -right-8 -top-12 h-40 w-40 rounded-full bg-white/20 blur-2xl" />
+    <div className="bg-[#E4E8F2] pb-28 dark:bg-background">
+      <header className="relative overflow-hidden bg-gradient-to-br from-[#0678A8] via-[#0FAEE5] to-[#5B4DDB] px-4 pb-12 pt-[max(0.65rem,env(safe-area-inset-top))] text-white">
+        <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-white/15 blur-2xl" />
         <div className="relative flex items-center justify-between">
-          <span className="inline-flex rounded-xl bg-white px-2 py-1.5 shadow-sm">
-            <Logo mark={26} />
-          </span>
+          <Logo variant="white" height={40} />
           <button
             type="button"
             aria-label="Notifications"
             onClick={() => navigate({ to: "/notifications" })}
-            className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15"
+            className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-white/20"
           >
-            <Bell size={22} strokeWidth={1.75} />
+            <Bell size={20} strokeWidth={1.75} />
             {unread > 0 && (
-              <span className="absolute right-2 top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F5B301] px-1 text-[10px] font-bold text-[#2B1F6E]">
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F5B301] px-1 text-[10px] font-bold text-[#2B1F6E]">
                 {unread}
               </span>
             )}
           </button>
         </div>
-        <div className="relative mt-4 flex items-center gap-3">
-          <Avatar src={user.photo} name={`${user.firstName} ${user.lastName}`} className="h-12 w-12" />
-          <div>
-            <p className="text-sm text-white/80">{greeting()}</p>
-            <h1 className="text-2xl font-semibold leading-7">Hi, {user.firstName}</h1>
+        <div className="relative mt-3 flex items-center gap-3">
+          <Avatar src={user.photo} name={`${user.firstName} ${user.lastName}`} className="h-11 w-11 ring-2 ring-white/40" />
+          <div className="min-w-0">
+            <p className="text-[13px] font-medium text-white">{greeting()}</p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-[22px] font-semibold leading-7">Hi, {user.firstName}</h1>
+              <span className="rounded-full bg-white/25 px-2 py-0.5 text-[11px] font-semibold text-white">Candidate</span>
+            </div>
           </div>
         </div>
-        <span className="relative mt-3 inline-flex rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold">Candidate</span>
       </header>
 
-      <div className="relative z-10 -mt-8 px-4">
+      <div className="relative z-10 -mt-6 px-4">
         <form
-          className="flex items-center gap-2 rounded-2xl bg-card p-2 shadow-[0_8px_24px_rgba(27,27,47,0.08)] dark:border dark:border-white/10"
+          className="flex items-center gap-2 rounded-2xl border border-white bg-white p-1.5 shadow-[0_10px_28px_rgba(27,27,47,0.14)] dark:border-white/10 dark:bg-card"
           onSubmit={(event) => {
             event.preventDefault();
             if (query.trim()) app.addRecentSearch(query);
@@ -93,8 +100,8 @@ function Home() {
         </form>
       </div>
 
-      <div className="mt-4 space-y-6 px-4">
-        <Card>
+      <div className="mt-4 space-y-5 px-4">
+        <Card className="border border-white shadow-[0_8px_24px_rgba(27,27,47,0.08)]">
           <div className="flex items-center gap-3">
             <ProgressRing value={score} />
             <div className="min-w-0 flex-1">
@@ -107,21 +114,16 @@ function Home() {
           </PrimaryButton>
         </Card>
 
-        <div className="-mx-4 flex gap-3 overflow-x-auto px-4 no-scrollbar">
-          {[
-            ["Active Applications", active.length],
-            ["Saved Jobs", app.savedIds.length],
-            ["Interviews Scheduled", interviews.length],
-            ["Profile Views", user.profileViews],
-          ].map(([label, value]) => (
-            <div key={String(label)} className="w-[148px] shrink-0 rounded-2xl bg-card p-4 shadow-[0_4px_16px_rgba(27,27,47,0.06)] dark:border dark:border-white/10 dark:shadow-none">
-              <p className="text-[28px] font-bold leading-8 text-heading">{value}</p>
-              <p className="mt-1 text-xs leading-4 text-muted-foreground">{label}</p>
+        <div className="grid grid-cols-2 gap-3">
+          {stats.map((item) => (
+            <div key={item.label} className={`rounded-2xl p-3.5 ${item.className}`}>
+              <p className="text-[26px] font-bold leading-8">{item.value}</p>
+              <p className="mt-0.5 text-[13px] font-medium leading-4">{item.label}</p>
             </div>
           ))}
         </div>
 
-        <Card>
+        <Card className="border border-white shadow-[0_8px_24px_rgba(27,27,47,0.08)]">
           <div className="flex items-start gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3E8FF] text-[#7A22C8] dark:bg-[#7A22C8]/20">
               <FileText size={20} />
@@ -156,7 +158,7 @@ function Home() {
               const job = app.jobs.find((entry) => entry.id === item.jobId);
               if (!job) return null;
               return (
-                <button key={item.id} type="button" onClick={() => navigate({ to: "/applications/$appId", params: { appId: item.id } })} className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 text-left shadow-[0_4px_16px_rgba(27,27,47,0.06)] dark:border dark:border-white/10 dark:shadow-none">
+                <button key={item.id} type="button" onClick={() => navigate({ to: "/applications/$appId", params: { appId: item.id } })} className="flex w-full items-center gap-3 rounded-2xl border border-white bg-white p-3 text-left shadow-[0_6px_18px_rgba(27,27,47,0.06)] dark:border-white/10 dark:bg-card">
                   <CompanyMark initials={job.initials} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold">{job.title}</span>
@@ -175,7 +177,7 @@ function Home() {
           <SectionTitle action={<TextLink to="/recommended">See all</TextLink>}>Recommended jobs</SectionTitle>
           <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 no-scrollbar">
             {recommended.map((job) => (
-              <button key={job.id} type="button" onClick={() => navigate({ to: "/jobs/$jobId", params: { jobId: job.id } })} className="w-[260px] shrink-0 rounded-2xl bg-card p-4 text-left shadow-[0_4px_16px_rgba(27,27,47,0.06)] dark:border dark:border-white/10 dark:shadow-none">
+              <button key={job.id} type="button" onClick={() => navigate({ to: "/jobs/$jobId", params: { jobId: job.id } })} className="w-[260px] shrink-0 rounded-2xl border border-white bg-white p-4 text-left shadow-[0_8px_20px_rgba(27,27,47,0.08)] dark:border-white/10 dark:bg-card">
                 <CompanyMark initials={job.initials} />
                 <p className="mt-3 text-[15px] font-semibold leading-5">{job.title}</p>
                 <p className="text-[13px] text-muted-foreground">{job.company}</p>
@@ -198,7 +200,7 @@ function Home() {
           <SectionTitle>Featured employers</SectionTitle>
           <div className="flex gap-3 overflow-x-auto no-scrollbar">
             {companies.map((job) => (
-              <button key={job.company} type="button" onClick={() => navigate({ to: "/jobs", search: { q: job.company, filters: false } })} className="w-28 shrink-0 rounded-2xl bg-card p-3 text-center shadow-[0_4px_16px_rgba(27,27,47,0.06)] dark:border dark:border-white/10 dark:shadow-none">
+              <button key={job.company} type="button" onClick={() => navigate({ to: "/jobs", search: { q: job.company, filters: false } })} className="w-28 shrink-0 rounded-2xl border border-white bg-white p-3 text-center shadow-[0_6px_16px_rgba(27,27,47,0.06)] dark:border-white/10 dark:bg-card">
                 <CompanyMark initials={job.initials} className="mx-auto" />
                 <p className="mt-2 line-clamp-2 text-[11px] font-semibold leading-4">{job.company}</p>
               </button>
@@ -265,7 +267,7 @@ function CompactJobs({ ids }: { ids: string[] }) {
         const job = app.jobs.find((item) => item.id === id);
         if (!job) return null;
         return (
-          <button key={id} type="button" onClick={() => navigate({ to: "/jobs/$jobId", params: { jobId: id } })} className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 text-left dark:border dark:border-white/10">
+          <button key={id} type="button" onClick={() => navigate({ to: "/jobs/$jobId", params: { jobId: id } })} className="flex w-full items-center gap-3 rounded-2xl border border-white bg-white p-3 text-left shadow-[0_6px_16px_rgba(27,27,47,0.05)] dark:border-white/10 dark:bg-card">
             <CompanyMark initials={job.initials} />
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-semibold">{job.title}</span>

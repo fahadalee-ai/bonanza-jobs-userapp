@@ -15,6 +15,15 @@ import {
 } from "./mock-data";
 
 export const STORAGE_KEY = "bonanza.candidate.v1";
+export const ONBOARDED_KEY = "bonanza.onboarded";
+
+function seenOnboarding() {
+  return readStorage(ONBOARDED_KEY) === "1";
+}
+
+function rememberOnboarding() {
+  writeStorage(ONBOARDED_KEY, "1");
+}
 
 export type Toast = { id: number; title: string; body?: string };
 
@@ -52,6 +61,7 @@ type Store = Snapshot & {
   markOnboarded: () => void;
   login: (email: string, password: string, remember?: boolean) => { ok: true } | { ok: false; reason: "invalid" | "locked" };
   beginSignup: (input: PendingSignup) => { ok: true } | { ok: false; reason: "exists" };
+  register: (input: PendingSignup) => { firstTime: boolean };
   verifyOtp: () => boolean;
   requestReset: (email: string) => void;
   resetPassword: (password: string) => boolean;
@@ -115,17 +125,20 @@ function fresh(): Snapshot {
 }
 
 function loadSnapshot(): Snapshot {
+  const seen = seenOnboarding();
   const raw = readStorage(STORAGE_KEY);
-  if (!raw) return fresh();
+  if (!raw) return { ...fresh(), onboarded: seen };
   try {
     const parsed = JSON.parse(raw) as Snapshot;
-    if (!parsed.users?.length) return fresh();
+    if (!parsed.users?.length) return { ...fresh(), onboarded: seen };
     if (!parsed.users.some((user) => user.email === DEMO_EMAIL)) {
       parsed.users = [SEED_USER, ...parsed.users];
     }
-    return { ...fresh(), ...parsed, users: parsed.users };
+    const onboarded = Boolean(parsed.onboarded) || seen;
+    if (onboarded) rememberOnboarding();
+    return { ...fresh(), ...parsed, users: parsed.users, onboarded };
   } catch {
-    return fresh();
+    return { ...fresh(), onboarded: seen };
   }
 }
 
@@ -154,7 +167,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    writeStorage(STORAGE_KEY, JSON.stringify(skipSessionPersist ? { ...snap, sessionId: null } : snap));
+    const next = skipSessionPersist ? { ...snap, sessionId: null } : snap;
+    const onboarded = next.onboarded || seenOnboarding();
+    writeStorage(STORAGE_KEY, JSON.stringify({ ...next, onboarded }));
   }, [snap, hydrated]);
 
   useEffect(() => {
@@ -204,9 +219,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       lockedUntil,
       pendingSignup,
       resetEmail,
-      markOnboarded: () => setSnap((current) => ({ ...current, onboarded: true })),
+      markOnboarded: () => {
+        rememberOnboarding();
+        setSnap((current) => ({ ...current, onboarded: true }));
+      },
       login: (email, password, remember = true) => {
-        if (Date.now() < lockedUntil) return { ok: false, reason: "locked" };
         const found = snap.users.find((item) => item.email.toLowerCase() === email.trim().toLowerCase());
         if (!found || found.password !== password) {
           const next = attempts + 1;
@@ -218,6 +235,62 @@ export function AppProvider({ children }: { children: ReactNode }) {
         skipSessionPersist = !remember;
         setSnap((current) => ({ ...current, sessionId: found.id, onboarded: true }));
         return { ok: true };
+      },
+      register: (input) => {
+        const email = input.email.trim().toLowerCase();
+        const existing = email ? snap.users.find((item) => item.email === email) : undefined;
+        if (existing) {
+          setSnap((current) => ({ ...current, sessionId: existing.id, onboarded: true }));
+          return { firstTime: false };
+        }
+        const name = input.name.trim() || "New Candidate";
+        const [firstName, ...rest] = name.split(/\s+/);
+        const created: Candidate = {
+          ...SEED_USER,
+          id: `u-${Date.now()}`,
+          firstName: firstName || "New",
+          lastName: rest.join(" ") || "Candidate",
+          email: email || `new.${Date.now()}@email.com`,
+          phone: input.phone,
+          password: input.password || "Bonanza123!",
+          headline: "",
+          summary: "",
+          photo: "",
+          address: "",
+          city: "",
+          state: "",
+          zip: "",
+          linkedin: "",
+          portfolio: "",
+          industry: "",
+          desiredTitle: "",
+          resumeName: "",
+          resumeSize: "",
+          resumeUpdated: "",
+          resumeVisible: false,
+          profileViews: 0,
+          skills: [],
+          experience: [],
+          education: [],
+          certifications: [],
+          preferences: {
+            ...SEED_USER.preferences,
+            roles: [],
+            locations: [],
+            workModes: [],
+            jobTypes: [],
+          },
+        };
+        setSnap((current) => ({
+          ...current,
+          users: [...current.users, created],
+          sessionId: created.id,
+          onboarded: true,
+          notifications: [],
+          savedIds: [],
+          recent: [],
+        }));
+        return { firstTime: true };
       },
       beginSignup: (input) => {
         if (snap.users.some((item) => item.email.toLowerCase() === input.email.trim().toLowerCase())) {
@@ -306,7 +379,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         })),
       resetDemo: () => {
         clearStorage(STORAGE_KEY);
-        setSnap(fresh());
+        rememberOnboarding();
+        setSnap({ ...fresh(), onboarded: true });
         setPendingSignup(null);
         setResetEmail("");
         pushToast("Sample data restored");

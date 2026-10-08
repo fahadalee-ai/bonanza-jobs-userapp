@@ -145,7 +145,7 @@ function Settings() {
         onClose={() => setLogout(false)}
         onConfirm={() => {
           app.logout();
-          navigate({ to: "/welcome", replace: true });
+          navigate({ to: "/login", replace: true });
         }}
       />
       <Sheet
@@ -158,7 +158,7 @@ function Settings() {
             disabled={phrase !== "DELETE"}
             onClick={() => {
               app.deleteAccount();
-              navigate({ to: "/welcome", replace: true });
+              navigate({ to: "/login", replace: true });
             }}
           >
             Delete account

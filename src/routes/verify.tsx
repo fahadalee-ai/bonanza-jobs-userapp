@@ -63,7 +63,7 @@ function Verify() {
 
   return (
     <div className="min-h-dvh pb-28">
-      <PageHeader title="Verify code" subtitle="We sent a 6-digit code" fallback="/signup" />
+      <PageHeader brand title="Verify code" subtitle="We sent a 6-digit code" fallback="/signup" />
       <div className="px-4">
         {done ? (
           <div className="pt-16 text-center">

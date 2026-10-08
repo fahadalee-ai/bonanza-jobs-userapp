@@ -3,6 +3,7 @@ import { Camera, ChevronRight, Pencil } from "lucide-react";
 import { useRef } from "react";
 import { completeness } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
+import { Logo } from "@/components/brand";
 import { Avatar, useGuard } from "@/components/ui-app";
 
 export const Route = createFileRoute("/profile/")({
@@ -33,11 +34,12 @@ function Profile() {
     <div className="min-h-dvh pb-28">
       <header className="bg-gradient-to-br from-[#0678A8] via-[#0FAEE5] to-[#5B4DDB] px-4 pb-6 pt-[max(1rem,env(safe-area-inset-top))] text-white">
         <div className="flex items-center justify-between">
-          <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold">Candidate</span>
+          <Logo variant="white" height={56} />
           <button type="button" aria-label="Settings" onClick={() => navigate({ to: "/settings" })} className="text-sm font-semibold">
             Settings
           </button>
         </div>
+        <span className="mt-3 inline-flex rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold">Candidate</span>
         <div className="mt-4 flex items-center gap-4">
           <button type="button" onClick={() => input.current?.click()} className="relative" aria-label="Edit photo">
             <Avatar src={user.photo} name={`${user.firstName} ${user.lastName}`} className="h-16 w-16 text-lg" />

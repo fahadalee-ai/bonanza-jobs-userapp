@@ -11,7 +11,7 @@ const FAQS = [
   ["How do referrals work?", "A referral agent can submit your profile to an employer. If you’re hired and stay through the retention window, the agent earns the referral fee. You’ll see a “Referred by” tag on that application."],
   ["How long does review take?", "Most employers review new applications within a few business days. Interview requests show up in Notifications and on the application timeline."],
   ["What if I’m offline?", "You’ll see an offline screen. Saved jobs and your profile stay on this device and sync when you reconnect."],
-  ["What if a screen fails to load?", "Use Try again. If your session expired, sign in again from the welcome screen."],
+  ["What if a screen fails to load?", "Use Try again. If your session expired, sign in again from the login screen."],
 ];
 
 function Help() {

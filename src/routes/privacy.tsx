@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
 function Privacy() {
   return (
     <div className="min-h-dvh">
-      <PageHeader title="Privacy Policy" fallback="/welcome" />
+      <PageHeader title="Privacy Policy" fallback="/login" />
       <article className="space-y-4 px-4 pb-10 text-[15px] leading-6 text-muted-foreground">
         <p>We collect the profile, resume, and application details you choose to provide so employers can review you for open roles. Visibility controls in Settings and on your resume decide whether recruiters can find you.</p>
         <p>Application status, interview times, and messages from employers are shown in the app. We use notifications only for the categories you leave on.</p>

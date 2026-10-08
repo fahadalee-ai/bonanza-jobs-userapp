@@ -10,10 +10,10 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import logoColor from "../img/logo.png";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppProvider, STORAGE_KEY } from "../lib/store";
 import { AppShell } from "../components/AppShell";
-import { asset } from "../lib/utils";
 
 
 function NotFoundComponent() {
@@ -23,7 +23,7 @@ function NotFoundComponent() {
       <p className="mt-2 text-sm text-muted-foreground">That screen isn’t part of the candidate app.</p>
       <Link
         to="/"
-        className="mt-6 inline-flex h-[52px] items-center justify-center rounded-[14px] bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] px-6 text-[15px] font-semibold text-white"
+        className="mt-6 inline-flex h-[52px] items-center justify-center rounded-lg bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] px-6 text-[15px] font-semibold text-white"
       >
         Back to start
       </Link>
@@ -50,13 +50,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             router.invalidate();
             reset();
           }}
-          className="inline-flex h-[52px] items-center justify-center rounded-[14px] bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] text-[15px] font-semibold text-white"
+          className="inline-flex h-[52px] items-center justify-center rounded-lg bg-gradient-to-br from-[#7A22C8] to-[#0FAEE5] text-[15px] font-semibold text-white"
         >
           Try again
         </button>
         <a
           href="/"
-          className="inline-flex h-[52px] items-center justify-center rounded-[14px] border border-[#7A22C8] text-[15px] font-semibold text-[#7A22C8]"
+          className="inline-flex h-[52px] items-center justify-center rounded-lg border border-[#7A22C8] text-[15px] font-semibold text-[#7A22C8]"
         >
           Go home
         </a>
@@ -90,7 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: asset("/favicon.ico"), type: "image/x-icon" },
+      { rel: "icon", href: logoColor, type: "image/png" },
     ],
   }),
 
